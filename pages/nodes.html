@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Kubernetes history server</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <style>
+      .apps td {
+        vertical-align: middle;
+      }
+      .table {
+        font-size: 0.8em;
+      }
+      .failed {
+        color: #A00;
+      }
+
+      .ts {
+        white-space:nowrap;
+      }
+
+      .search {
+        margin: 1em 1em 1em 1em;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  </head>
+
+  <body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Pods</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/nodes.html">Nodes</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="search">
+      <form id="nodesearch" onclick>
+        <div class="form-row">
+          <div class="col-md-3 mb-3">
+            <label>node name</label>
+            <input type="text" name="name" class="form-control">
+          </div>
+          <div class="col-md-2 mb-3">
+            <label>node/host ip</label>
+            <input type="text" name="hostIP" class="form-control">
+          </div>
+        </div>
+        <input type="submit" />
+
+      </form>
+
+    </div>
+    <div class="container-fluid">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <td colspan="8">
+              <h2>Nodes</h2>
+            </td>
+          </tr>
+          <tr>
+              <th scope="col">snapshot ts</th>
+              <th scope="col">name</th>
+              <th scope="col">selfLink</th>
+              <th scope="col">hostIP</th>
+              <th scope="col">tools</th>
+          </tr>
+        </thead>
+        <tbody id="nodes">
+
+        </tbody>
+      </table>
+
+    </div>
+
+    <script type="text/javascript">
+
+    function togglenode(id) {
+      $("#" + id).toggle();
+    }
+
+    function renderNodes(pods) {
+      var table = $("#nodes")
+      table.empty();
+      $.each(pods, function(i, node) {
+        data = JSON.parse(node["data"]);
+
+        table.append("<tr><td class=\"ts\">" + node["ts"] + "</td><td>" + node["name"] + "</td>" +
+        "<td>" + node["selfLink"] + "</td><td>" + node["hostIP"] + "</td>" +
+        "<td><button onclick=\"togglenode('node-" + node["id"] + "');\" type=\"submit\" value=\"json\"></td></tr>" +
+        "<tr id=\"node-" + node["id"] + "\" style=\"display: none\"><td colspan=\"6\"><div><pre>" + JSON.stringify(data, null, 2) + "</pre></div></td>" +
+        "</tr>")
+      });
+    }
+
+    $("#nodesearch").submit(function (event) {
+        event.preventDefault();
+        var form = $(this);
+        jQuery.ajax({
+          url: "/nodes",
+          data: form.serialize(),
+          success: function(data) {
+            renderNodes(data);
+          }
+        });
+    });
+
+    </script>
+
+  </body>
+</html>
