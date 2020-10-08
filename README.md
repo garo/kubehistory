@@ -1,3 +1,5 @@
+![Image of build status](https://img.shields.io/docker/pulls/garo5/kubehistory.svg)
+
 # Stores pod and node manifests as snapshots from Kubernetes
 
 Have you ever wished that you could do "kubectl get pod xyz -o yaml" after the pod is long gone?
@@ -10,3 +12,7 @@ It also provides a really simple UI where you can query the stored snapshots and
 - Setup a PostgreSQL database in a namespace
 - Deploy this image as a Deployment with a single replica.
 - Pass PSQL_URL environment variable with value like "postgres://username:password@kubehistory-psql.mynamespace.svc.cluster.local:5432/database?sslmode=disable"
+
+## Images
+
+Prebuilt images are available at https://hub.docker.com/repository/docker/garo5/kubehistory
